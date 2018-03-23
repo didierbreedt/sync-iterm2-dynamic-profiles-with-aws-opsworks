@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.amazonaws:aws-java-sdk-mobile:1.11.297">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-java-sdk-mobile/1.11.297/e46817be381fe8c2475c2f1e4b550307413f52f/aws-java-sdk-mobile-1.11.297.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-java-sdk-mobile/1.11.297/b67803153bce88c1e9fc0a0dcbdc7e96ef7a2fc4/aws-java-sdk-mobile-1.11.297-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.amazonaws:aws-java-sdk-codedeploy:1.11.297">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-java-sdk-codedeploy/1.11.297/ad353d3637b5e1a1637c2bae5fc9cb27bc72d760/aws-java-sdk-codedeploy-1.11.297.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-java-sdk-codedeploy/1.11.297/7a60362a1cc2fdf4dd180b40513de836adb0f9b3/aws-java-sdk-codedeploy-1.11.297-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

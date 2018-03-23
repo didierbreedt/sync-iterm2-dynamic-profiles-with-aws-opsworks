@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.amazonaws:aws-java-sdk-codestar:1.11.297">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-java-sdk-codestar/1.11.297/8b608bf2a90a8cdffc9f5d01432bfce39e100df1/aws-java-sdk-codestar-1.11.297.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-java-sdk-codestar/1.11.297/31017e89cf25e18be6d076420b8f0341ef97f0d4/aws-java-sdk-codestar-1.11.297-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

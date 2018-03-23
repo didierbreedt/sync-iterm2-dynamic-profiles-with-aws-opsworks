@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.amazonaws:aws-java-sdk-mediaconvert:1.11.297">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-java-sdk-mediaconvert/1.11.297/4f53e07e29fc32c672925a7ffbdbc5d16f7237db/aws-java-sdk-mediaconvert-1.11.297.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-java-sdk-mediaconvert/1.11.297/fad0b61d3bec3582f5e3e92577201bb54b5c8aea/aws-java-sdk-mediaconvert-1.11.297-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
