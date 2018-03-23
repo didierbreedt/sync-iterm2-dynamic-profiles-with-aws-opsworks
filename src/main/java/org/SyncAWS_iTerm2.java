@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SyncAWS_iTerm2 extends Application {
@@ -27,9 +28,12 @@ public class SyncAWS_iTerm2 extends Application {
     private ComboBox<AwsOpsworksStack> stackSelection = new ComboBox<>();
     private Tooltip regionTooltip = new Tooltip();
     private Button btn = new Button();
+
     private AWSCredentials awsCredentials = new AWSCredentialsProviderChain(
-            new ProfileCredentialsProvider()
+            new ProfileCredentialsProvider(),
+            new AWSStaticCredentialsProvider(new BasicAWSCredentials("", ""))
     ).getCredentials();
+
     private AWSOpsWorks awsOpsWorks;
     private String dynamicProfileLocation = System.getProperty("user.home") + "/Library/Application Support/iTerm2/DynamicProfiles";
     private Gson gson = new GsonBuilder().create();
