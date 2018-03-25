@@ -14,9 +14,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.awt.event.ActionEvent;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class SyncAWS_iTerm2 extends Application {
@@ -25,9 +25,11 @@ public class SyncAWS_iTerm2 extends Application {
     private TextField key = new TextField();
     private TextField secret = new TextField();
     private TextField region = new TextField();
+    private TextField username = new TextField();
     private ComboBox<AwsOpsworksStack> stackSelection = new ComboBox<>();
     private Tooltip regionTooltip = new Tooltip();
-    private Button btn = new Button();
+    private Button btnSyncStacks = new Button();
+    private Button btnSyncProfiles = new Button();
 
     private AWSCredentials awsCredentials = new AWSCredentialsProviderChain(
             new ProfileCredentialsProvider(),
@@ -73,6 +75,7 @@ public class SyncAWS_iTerm2 extends Application {
         stackSelection.setLayoutY(130);
         stackSelection.setPromptText("Stack Selection");
         stackSelection.setPrefWidth(380);
+        stackSelection.setDisable(true);
         regionTooltip.setText("Please note, if your stack is not regional, stick to us-east-1");
         region.setTooltip(regionTooltip);
 
@@ -81,22 +84,37 @@ public class SyncAWS_iTerm2 extends Application {
         autoSudo.setPrefWidth(380);
         autoSudo.setVisible(false);
 
-        btn.setLayoutX(10);
-        btn.setLayoutY(210);
-        btn.setPrefWidth(380);
-        btn.setText("Retrieve Stacks");
+        username.setLayoutX(200);
+        username.setLayoutY(170);
+        username.setPromptText("SSH Username");
+        username.setPrefWidth(180);
+        username.setText(System.getProperty("user.name"));
+        username.setVisible(false);
 
-        btn.setOnAction(ActionEvent -> syncStacks());
+        btnSyncStacks.setLayoutX(10);
+        btnSyncStacks.setLayoutY(210);
+        btnSyncStacks.setPrefWidth(380);
+        btnSyncStacks.setText("Retrieve Stacks");
+        btnSyncStacks.setOnAction(ActionEvent -> syncStacks());
+
+        btnSyncProfiles.setLayoutX(10);
+        btnSyncProfiles.setLayoutY(250);
+        btnSyncProfiles.setPrefWidth(380);
+        btnSyncProfiles.setText("Sync Dynamic Profiles");
+        btnSyncProfiles.setDisable(true);
+        btnSyncProfiles.setOnAction(ActionEvent -> syncProfiles());
 
         Pane root = new Pane();
 
-        root.getChildren().add(btn);
+        root.getChildren().add(btnSyncStacks);
         root.getChildren().add(key);
         root.getChildren().add(secret);
         root.getChildren().add(region);
         root.getChildren().add(stackSelection);
         root.getChildren().add(autoSudo);
-        primaryStage.setScene(new Scene(root, 400, 250));
+        root.getChildren().add(btnSyncProfiles);
+        root.getChildren().add(username);
+        primaryStage.setScene(new Scene(root, 400, 300));
         primaryStage.show();
     }
 
@@ -105,8 +123,9 @@ public class SyncAWS_iTerm2 extends Application {
             err("Please select a stack");
             return;
         }
-        btn.setText("Syncing iTerm2 Profiles with " + stackSelection.getSelectionModel().getSelectedItem().getName());
-        btn.setDisable(true);
+        btnSyncProfiles.setText("Syncing iTerm2 Profiles with " + stackSelection.getSelectionModel().getSelectedItem().getName());
+        btnSyncProfiles.setDisable(true);
+        btnSyncStacks.setDisable(true);
 
         Task task = new Task() {
             @Override
@@ -122,7 +141,8 @@ public class SyncAWS_iTerm2 extends Application {
                             new Profile(
                                 stackSelection.getSelectionModel().getSelectedItem().getName(),
                                 instance,
-                                autoSudo.isSelected()
+                                autoSudo.isSelected(),
+                                username.getText()
                             )
                     );
                     Profiles profiles = new Profiles(profileList);
@@ -139,7 +159,9 @@ public class SyncAWS_iTerm2 extends Application {
         };
         task.setOnSucceeded(WorkerStateEvent->{
             System.out.println("Sync profiles completed");
-            btn.setText("All done");
+            btnSyncProfiles.setText("All done, sync again?");
+            btnSyncProfiles.setDisable(false);
+            btnSyncStacks.setDisable(false);
         });
         task.setOnFailed(WorkerStateEvent->{
             err("Something went wrong..." + task.getException());
@@ -158,8 +180,8 @@ public class SyncAWS_iTerm2 extends Application {
     }
 
     private void syncStacks() {
-        btn.setText("Retrieving Stacks...");
-        btn.setDisable(true);
+        btnSyncStacks.setText("Retrieving Stacks...");
+        btnSyncStacks.setDisable(true);
         Boolean validRegionEntered = false;
         Regions defaultRegion = Regions.US_EAST_1;
         for (Regions officialRegion : Regions.values()) {
@@ -192,10 +214,13 @@ public class SyncAWS_iTerm2 extends Application {
             }
         };
         task.setOnSucceeded(WorkerStateEvent->{
-            btn.setText("Sync Profiles");
-            btn.setDisable(false);
+            //btnSyncStacks.setText("Sync Profiles");
+            btnSyncStacks.setDisable(false);
             autoSudo.setVisible(true);
-            btn.setOnAction(EventActions->syncProfiles());
+            stackSelection.setDisable(false);
+            btnSyncProfiles.setDisable(false);
+            username.setVisible(true);
+            //btnSyncStacks.setOnAction(EventActions->syncProfiles());
         });
 
         task.setOnFailed(WorkerStateEvent->err("Something went wrong. Double check your AWS Credentials." + task.getException()));

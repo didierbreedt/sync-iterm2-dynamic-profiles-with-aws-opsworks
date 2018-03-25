@@ -22,9 +22,14 @@ class Profile {
 
     private String Name;
 
-    Profile(String stackName, Instance instance, Boolean autoSudo) {
+    Profile(String stackName, Instance instance, Boolean autoSudo, String username) {
         this.CustomCommand = "Yes";
-        this.Command = "ssh " + instance.getPrivateIp();
+        if ( username.isEmpty() ) {
+            this.Command = "ssh " + instance.getPrivateIp();
+        }
+        else {
+            this.Command = "ssh " + username + "@" + instance.getPrivateIp();
+        }
         this.Guid = instance.getInstanceId();
         this.Tags.add(stackName);
         this.Tags.add(instance.getStatus());
