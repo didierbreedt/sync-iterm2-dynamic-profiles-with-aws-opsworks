@@ -21,6 +21,9 @@ import java.util.List;
 
 public class SyncAWS_iTerm2 extends Application {
 
+    final static String INSTANCE_STOPPED = "stopped";
+
+    private CheckBox includeStopped = new CheckBox("Include stopped instances?");
     private CheckBox autoSudo = new CheckBox("Sudo upon login?");
     private TextField key = new TextField();
     private TextField secret = new TextField();
@@ -84,21 +87,26 @@ public class SyncAWS_iTerm2 extends Application {
         autoSudo.setPrefWidth(380);
         autoSudo.setVisible(false);
 
-        username.setLayoutX(200);
-        username.setLayoutY(170);
+        includeStopped.setLayoutX(10);
+        includeStopped.setLayoutY(210);
+        includeStopped.setPrefWidth(380);
+        includeStopped.setVisible(false);
+
+        username.setLayoutX(210);
+        username.setLayoutY(210);
         username.setPromptText("SSH Username");
         username.setPrefWidth(180);
         username.setText(System.getProperty("user.name"));
         username.setVisible(false);
 
         btnSyncStacks.setLayoutX(10);
-        btnSyncStacks.setLayoutY(210);
+        btnSyncStacks.setLayoutY(250);
         btnSyncStacks.setPrefWidth(380);
         btnSyncStacks.setText("Retrieve Stacks");
         btnSyncStacks.setOnAction(ActionEvent -> syncStacks());
 
         btnSyncProfiles.setLayoutX(10);
-        btnSyncProfiles.setLayoutY(250);
+        btnSyncProfiles.setLayoutY(290);
         btnSyncProfiles.setPrefWidth(380);
         btnSyncProfiles.setText("Sync Dynamic Profiles");
         btnSyncProfiles.setDisable(true);
@@ -112,9 +120,10 @@ public class SyncAWS_iTerm2 extends Application {
         root.getChildren().add(region);
         root.getChildren().add(stackSelection);
         root.getChildren().add(autoSudo);
+        root.getChildren().add(includeStopped);
         root.getChildren().add(btnSyncProfiles);
         root.getChildren().add(username);
-        primaryStage.setScene(new Scene(root, 400, 300));
+        primaryStage.setScene(new Scene(root, 410, 340));
         primaryStage.show();
     }
 
@@ -137,6 +146,11 @@ public class SyncAWS_iTerm2 extends Application {
                 DescribeInstancesResult describeInstancesResult = awsOpsWorks.describeInstances(describeInstancesRequest);
                 for(Instance instance : describeInstancesResult.getInstances()) {
                     List<Profile> profileList = new ArrayList<>();
+
+                    if (!includeStopped.isSelected() && instance.getStatus().equals(SyncAWS_iTerm2.INSTANCE_STOPPED)) {
+                        continue;
+                    }
+
                     profileList.add(
                             new Profile(
                                 stackSelection.getSelectionModel().getSelectedItem().getName(),
@@ -146,7 +160,7 @@ public class SyncAWS_iTerm2 extends Application {
                             )
                     );
                     Profiles profiles = new Profiles(profileList);
-                    try (FileWriter file = new FileWriter(dynamicProfileLocation + "/" + instance.getHostname() + ".json")) {
+                    try (FileWriter file = new FileWriter(dynamicProfileLocation + "/" + instance.getHostname() + ".json", false)) {
                         file.write(gson.toJson(profiles));
                         file.flush();
                     } catch (IOException e) {
@@ -180,8 +194,21 @@ public class SyncAWS_iTerm2 extends Application {
     }
 
     private void syncStacks() {
+        if (username.isVisible()) {
+            username.setVisible(false);
+        }
+        if (includeStopped.isVisible()) {
+            includeStopped.setVisible(false);
+        }
+        if (autoSudo.isVisible()) {
+            autoSudo.setVisible(false);
+        }
+        if (btnSyncProfiles.isVisible()) {
+            btnSyncProfiles.setVisible(false);
+        }
         btnSyncStacks.setText("Retrieving Stacks...");
         btnSyncStacks.setDisable(true);
+        stackSelection.setValue(null);
         Boolean validRegionEntered = false;
         Regions defaultRegion = Regions.US_EAST_1;
         for (Regions officialRegion : Regions.values()) {
@@ -205,6 +232,8 @@ public class SyncAWS_iTerm2 extends Application {
                 DescribeStacksResult describeStacksResult = awsOpsWorks.describeStacks(describeStacksRequest);
                 System.out.println(describeStacksResult.toString());
 
+                stackSelection.setValue(null);
+//                stackSelection.getItems().clear();
                 for (Stack stack : describeStacksResult.getStacks()) {
                     AwsOpsworksStack awsOpsworksStack = new AwsOpsworksStack(stack);
                     stackSelection.getItems().add(awsOpsworksStack);
@@ -217,8 +246,10 @@ public class SyncAWS_iTerm2 extends Application {
             //btnSyncStacks.setText("Sync Profiles");
             btnSyncStacks.setDisable(false);
             autoSudo.setVisible(true);
+            includeStopped.setVisible(true);
             stackSelection.setDisable(false);
             btnSyncProfiles.setDisable(false);
+            btnSyncProfiles.setVisible(true);
             username.setVisible(true);
             //btnSyncStacks.setOnAction(EventActions->syncProfiles());
         });
